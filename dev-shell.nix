@@ -3,7 +3,7 @@
     config.allowUnfree = true;
   }
 , target ? "64"
-, protonRoot ? "/etc/nixos/modules/apps/pkg-overrides/proton-custom"
+, protonRoot ? "/etc/nixos/nix/apps/pkg-overrides/proton-custom"
 }:
 
 let

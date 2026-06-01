@@ -53,7 +53,7 @@ windows sized to the swap-chain extent. Wine owns the DComp object model,
 Win32 lifetime, popup placement, and tray icon bridge.
 
 The installed `battlenet` wrapper has no CPU-compositing fallback or ANGLE
-backend override. App-specific diagnostics live in `modules/apps/pkg-overrides/test`,
+backend override. App-specific diagnostics live in `nix/apps/pkg-overrides/test`,
 not in the desktop launcher.
 
 ## Promotion Build
@@ -77,7 +77,7 @@ tool as everything else. The production package installs:
   because nixpkgs currently only exposes the 64-bit output on this system.
 
 Rocksmith still owns its prefix registration and low-latency launch flags in
-`modules/apps/rocksmith.nix` and `modules/apps/steam.nix`. This package only
+`nix/apps/rocksmith.nix` and `nix/apps/steam.nix`. This package only
 provides the WineASIO DLL payload.
 
 ## Fast Local Iteration
@@ -86,17 +86,17 @@ The full Nix package path is reproducible, but it is too slow for UI debugging.
 Keep mutable source and build trees in this project directory, ignored by git:
 
 ```text
-modules/apps/pkg-overrides/proton-custom/src/wine
-modules/apps/pkg-overrides/proton-custom/src/wine64
-modules/apps/pkg-overrides/proton-custom/src/wine32
-modules/apps/pkg-overrides/proton-custom/src/dxvk
+nix/apps/pkg-overrides/proton-custom/src/wine
+nix/apps/pkg-overrides/proton-custom/src/wine64
+nix/apps/pkg-overrides/proton-custom/src/wine32
+nix/apps/pkg-overrides/proton-custom/src/dxvk
 ```
 
 Use the local dev compat tool for hot loops through the project Makefile:
 
 ```bash
-nix-shell /etc/nixos/modules/apps/pkg-overrides/proton-custom/dev-shell.nix
-cd /etc/nixos/modules/apps/pkg-overrides/proton-custom
+nix-shell /etc/nixos/nix/apps/pkg-overrides/proton-custom/dev-shell.nix
+cd /etc/nixos/nix/apps/pkg-overrides/proton-custom
 make setup
 make status
 ```
@@ -118,8 +118,8 @@ make overlay-dxvk
 The overlay commands also accept the reproducible Nix outputs directly:
 
 ```bash
-wine_out=$(nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in (pkgs.callPackage /etc/nixos/modules/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }).passthru.wineArtifacts')
-dxvk_out=$(nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in (pkgs.callPackage /etc/nixos/modules/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }).passthru.dxvkArtifacts')
+wine_out=$(nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in (pkgs.callPackage /etc/nixos/nix/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }).passthru.wineArtifacts')
+dxvk_out=$(nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in (pkgs.callPackage /etc/nixos/nix/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }).passthru.dxvkArtifacts')
 ./bin/proton-custom-dev overlay-wine --wine "$wine_out"
 ./bin/proton-custom-dev overlay-dxvk --dxvk "$dxvk_out"
 ```
@@ -172,7 +172,7 @@ git -C "$PROTON_CUSTOM_WINE_SRC" commit -am 'dcomp: describe the tested fix'
 make wine-format-patch RANGE='-1 HEAD'
 ```
 
-Battle.net repro/debug loops live in `modules/apps/pkg-overrides/test`, not
+Battle.net repro/debug loops live in `nix/apps/pkg-overrides/test`, not
 here. Use that Makefile when exercising the launcher.
 
 Return to the pinned Nix store compat tool with:
@@ -192,7 +192,7 @@ nix build --dry-run --impure '/etc/nixos#nixosConfigurations."the desktop-Secure
 The package-only promotion build is:
 
 ```bash
-nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in pkgs.callPackage /etc/nixos/modules/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }'
+nix build --no-link --print-out-paths --impure --expr 'let flake = builtins.getFlake "git+file:///etc/nixos"; pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in pkgs.callPackage /etc/nixos/nix/apps/pkg-overrides/proton-custom/package.nix { inherit (pkgs) makeWrapper rsync unzip; }'
 ```
 
 Expected Wayland result:
