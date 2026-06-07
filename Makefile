@@ -5,7 +5,7 @@ MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
 NIXOS ?= /etc/nixos
-PROTON_DIR ?= $(NIXOS)/nix/apps/pkg-overrides/proton-custom
+PROTON_DIR ?= $(NIXOS)/nix/apps/gaming/proton/custom
 PROTON_CUSTOM_DEV ?= $(PROTON_DIR)/bin/proton-custom-dev
 
 JOBS ?= $(shell nproc)

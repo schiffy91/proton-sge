@@ -15,7 +15,7 @@ from pathlib import Path
 TOOL_NAME = "proton-custom-GE-Proton10-34"
 DEV_TOOL_NAME = f"{TOOL_NAME}-dev"
 NIXOS = Path("/etc/nixos")
-PROTON_DIR = NIXOS / "modules/apps/pkg-overrides/proton-custom"
+PROTON_DIR = NIXOS / "nix/apps/gaming/proton/custom"
 SCREENSHOT_MODES = {
     "full": "-f",
     "active": "-a",
@@ -623,7 +623,7 @@ def nix_expr(attr: str) -> str:
         'let '
         'flake = builtins.getFlake "git+file:///etc/nixos"; '
         'pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; '
-        f'in (pkgs.callPackage /etc/nixos/modules/apps/pkg-overrides/proton-custom/package.nix '
+        f'in (pkgs.callPackage /etc/nixos/nix/apps/gaming/proton/custom/package.nix '
         '{ inherit (pkgs) makeWrapper rsync unzip; }).'
         f'{attr}'
     )
@@ -653,7 +653,7 @@ def nix_build_pkgs_path(attr: str) -> Path:
 
 def install_wineasio_payload(dst: Path) -> None:
     wineasio64 = nix_build_pkgs_path("wineasio")
-    wineasio32 = NIXOS / "modules/apps/pkg-overrides/rocksmith"
+    wineasio32 = NIXOS / "nix/apps/gaming/rocksmith/assets"
     for src, rel in (
         (wineasio64 / "lib/wine/x86_64-windows/wineasio64.dll", "x86_64-windows/wineasio64.dll"),
         (wineasio64 / "lib/wine/x86_64-unix/wineasio64.dll.so", "x86_64-unix/wineasio64.dll.so"),

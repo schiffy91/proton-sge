@@ -46,7 +46,7 @@ let
   dxvkRev     = "1676dcaf342a9b13af86c0464ad46235687727a6";
   dxvkHash    = "sha256-wnxOLWRcXJyCsQ1xaFgnrmQrfpq+O1vgJh+f7sa0qZg=";
   wineasio64 = pkgs.wineasio;
-  wineasio32Files = ../rocksmith;
+  wineasio32Files = ../../rocksmith/assets;
 
   # GE-Proton binary tarball (DXVK, VKD3D-Proton, Proton scripts, mono, gecko).
   # Keep this pinned to the exact tool whose Wine tree is patched below; using

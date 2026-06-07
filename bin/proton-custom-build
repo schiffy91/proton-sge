@@ -73,7 +73,7 @@ build_package() {
   nix build --no-link --print-out-paths --impure --expr \
     'let flake = builtins.getFlake "git+file:///etc/nixos";
          pkgs = import flake.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; };
-     in pkgs.callPackage /etc/nixos/modules/apps/pkg-overrides/proton-custom/package.nix {
+     in pkgs.callPackage /etc/nixos/nix/apps/gaming/proton/custom/package.nix {
        inherit (pkgs) makeWrapper rsync unzip;
      }'
 }
