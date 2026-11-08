@@ -3,22 +3,19 @@
     config.allowUnfree = true;
   }
 , target ? "64"
-, protonRoot ? "/etc/nixos/nix/apps/gaming/proton/custom"
+, protonRoot ? "/etc/nixos/config/pkgs/gaming/proton/custom"
 }:
 
 let
   shellHook = ''
     export PROTON_CUSTOM_IN_DEV_SHELL=1
+    export PROTON_CUSTOM_ROOT="${protonRoot}"
     export PROTON_CUSTOM_DEV_ROOT="${protonRoot}/src"
     export PROTON_CUSTOM_WINE_SRC="$PROTON_CUSTOM_DEV_ROOT/wine"
     export PROTON_CUSTOM_WINE64_BUILD="$PROTON_CUSTOM_DEV_ROOT/wine64"
     export PROTON_CUSTOM_WINE32_BUILD="$PROTON_CUSTOM_DEV_ROOT/wine32"
     export PROTON_CUSTOM_JOBS="''${PROTON_CUSTOM_JOBS:-$(nproc)}"
-    export PATH="${protonRoot}/bin:$PATH"
     mkdir -p "$PROTON_CUSTOM_DEV_ROOT"
-
-    alias proton-custom-dev=${protonRoot}/bin/proton-custom-dev
-    alias proton-custom-make='make -C ${protonRoot}'
 
     if [ "''${PROTON_CUSTOM_QUIET_SHELL:-}" = 1 ]; then
       return
@@ -33,6 +30,7 @@ EOF
   '';
 
   commonPackages = with pkgs; [
+    (import ./tools.nix { inherit pkgs; })
     autoconf
     automake
     bison

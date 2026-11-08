@@ -5,8 +5,8 @@ MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
 NIXOS ?= /etc/nixos
-PROTON_DIR ?= $(NIXOS)/nix/apps/gaming/proton/custom
-PROTON_CUSTOM_DEV ?= $(PROTON_DIR)/bin/proton-custom-dev
+PROTON_DIR ?= $(NIXOS)/config/pkgs/gaming/proton/custom
+PROTON_CUSTOM_DEV ?= proton-custom-dev
 
 JOBS ?= $(shell nproc)
 PATCH_OUT ?= $(PROTON_DIR)/src/patches
@@ -42,9 +42,9 @@ help:
 		'proton-custom development' \
 		'' \
 		'Bootstrap without host make:' \
-		'  ./bin/proton-custom-make setup      run targets through the Nix dev shell' \
-		'  ./bin/proton-custom-build changed   build changed Wine targets' \
-		'  ./bin/proton-custom-install dev     point Steam compat tool at the dev tree' \
+		'  nix-shell dev-shell.nix --run "proton-custom-make setup"' \
+		'  proton-custom-build changed   build changed Wine targets in the dev shell' \
+		'  proton-custom-install dev     point Steam compat tool at the dev tree' \
 		'' \
 		'Environment:' \
 		'  make shell                    enter the Nix dev shell' \
@@ -86,7 +86,7 @@ reset-dev:
 
 install-store:
 	@test -n "$(STORE)" || (echo 'STORE is required' >&2; exit 1)
-	$(PROTON_DIR)/bin/proton-custom-install store "$(STORE)"
+	$(call proton_custom_run,proton-custom-install store "$(STORE)")
 
 use:
 	$(call proton_custom_run,$(PROTON_CUSTOM_DEV) setup)

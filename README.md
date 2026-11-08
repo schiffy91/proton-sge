@@ -84,7 +84,7 @@ D3DKMT shared resources.
 ## DPI
 
 Nothing here scales UIs. Like Windows, the DPI lives in the prefix registry
-(`LogPixels`), written by `wine-prefix-dpi` from `nix/apps/gaming/proton/dpi.nix`:
+(`LogPixels`), written by `wine-prefix-dpi` from `config/pkgs/gaming/wine/default.nix`:
 the Battle.net launcher sets it on its prefix before each start, and the Steam
 default launch options run every game through `wine-prefix-dpi exec`, which
 writes it into that game's prefix.
@@ -99,3 +99,8 @@ launcher at; `make restore` points them back at the store build. `make
 wine-format-patch RANGE=...` exports commits from `src/wine` as patch files.
 `make check-patches` and `make patch-lint` verify the series applies and is
 well formed. `src/` is git-ignored scratch.
+
+The dev shell supplies `proton-custom-dev`, `proton-custom-build`,
+`proton-custom-install`, and `proton-custom-make` from `tools.nix`. Their BTRC
+implementation lives in `tools/`; the same package is used by the Battle.net
+test shell. `proton-custom-dev --help` lists launch, capture, and source commands.
