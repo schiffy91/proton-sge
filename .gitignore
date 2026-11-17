@@ -1,0 +1,6 @@
+tests/testkit
+**/.btrc-cache/
+result
+result-*
+build/
+src/

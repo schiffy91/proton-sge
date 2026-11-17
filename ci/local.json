@@ -1,0 +1,16 @@
+{
+  "jobs": {
+    "lint": {
+      "platform": "linux-x86_64",
+      "run": "nix flake check --no-build"
+    },
+    "unit": {
+      "platform": "linux-x86_64",
+      "run": "ci/checks.sh unit"
+    },
+    "build": {
+      "platform": "linux-x86_64",
+      "run": "nix build --no-link .#proton-sge .#tools"
+    }
+  }
+}

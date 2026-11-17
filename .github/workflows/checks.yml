@@ -1,0 +1,33 @@
+name: checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # What the owner's machines already passed for this exact commit (`ci-local`, ci/local.json). Building the
+  # tool (`build` in the table) takes a Wine build and is done there only; its status is where a commit shows it.
+  local:
+    uses: schiffy91/ci-local/.github/workflows/local-passes.yml@46bebec22a3affc1be02f115640488afdbbcf31a
+    permissions:
+      statuses: read
+
+  checks:
+    needs: local
+    if: ${{ !(contains(fromJSON(needs.local.outputs.passed), 'local/linux-x86_64/lint') && contains(fromJSON(needs.local.outputs.passed), 'local/linux-x86_64/unit')) }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - name: the flake evaluates
+        if: ${{ !contains(fromJSON(needs.local.outputs.passed), 'local/linux-x86_64/lint') }}
+        run: nix flake check --no-build
+      - name: unit checks
+        if: ${{ !contains(fromJSON(needs.local.outputs.passed), 'local/linux-x86_64/unit') }}
+        run: ci/checks.sh unit
