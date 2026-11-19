@@ -22,6 +22,7 @@
       checks.${system} = {  # the tool itself is built by ci/local.json's job `build`
         unit-tools = import ./tests/tools { inherit pkgs inputs; };
         unit-pdb = import ./tests/pdb { inherit pkgs; };
+        unit-ge-sequence = import ./tests/ge-sequence { inherit pkgs; protonSge = self.packages.${system}.proton-sge; };
       };
     };
 }

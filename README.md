@@ -28,12 +28,22 @@ Steam then lists the tool as `proton-sge-GE-Proton11-12`. A host that has the 32
 | `packages.x86_64-linux.tools` | `proton-sge-dev`, `-build`, `-install`, `-make`: the development loop below |
 | `devShells.x86_64-linux.default` | the shell Wine is configured and built in |
 | `checks.x86_64-linux.unit-tools`, `unit-pdb` | the tools' contract tests, and the symbol tests |
+| `checks.x86_64-linux.unit-ge-sequence` | GE's patch order as this package applies it, held against GE's own script |
 
 Building the tool takes a Wine build, so it is not done on a hosted runner: `ci/local.json` names the job
 `build`, and a pass recorded with [`ci-local`](https://github.com/schiffy91/ci-local) on the owner's
 machine is where a commit shows it. The development commands are run from a checkout of this repository
 (or with `PROTON_SGE_ROOT` naming one); `PROTON_SGE_EXTRA_FILES` names the WineASIO directory for a
 development install.
+
+GE's script cannot run here (it wants the `wine-staging` submodule and a git checkout), so the patches it
+applies are written out in `ge-sequence.sh`, in its order. A rejected hunk in an overlaid module stops the
+build; a patch missing from the list would not, and the result would be modules that do not match GE's
+wineserver. `unit-ge-sequence` therefore runs the Wine section of GE's own script with its patch commands
+only naming their patches, and fails unless the two lists are the same in the same order (866 patches at
+GE-Proton11-12). What is left out on purpose is named in `tests/ge-sequence/compare.sh`: everything from
+the absent `wine-staging` tree, and the OpenXR patch. After a rebase onto a new GE release, this check says
+which lines of `ge-sequence.sh` to change.
 
 ## Patches
 
